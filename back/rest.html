@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Y&M</title>
+
+    <style>
+        .file-upload {
+            height: 100px;
+            width: 100px;
+            margin: 40px auto;
+            border: 1px solid #f0c0d0;
+            border-radius: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .file-upload input {
+            position: absolute;
+            height: 400px;
+            width: 400px;
+            left: -200px;
+            top: -200px;
+            background: transparent;
+            opacity: 0;
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+            filter: alpha(opacity=0);
+        }
+
+        .file-upload img {
+            height: 70px;
+            width: 70px;
+            margin: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // CORS test
+        const test = () => {
+            const myToken = "";
+            axios
+                .get("http://127.0.0.1:8000/")
+                .then(function (response) {
+                    // handle success
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    console.log("ok");
+                });
+        };
+
+        const login = async () => {
+            // console.log("bef");
+            let token = await fetch("http://127.0.0.1:8000/token/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: user.value,
+                    password: pwd.value,
+                }),
+            });
+            // console.log("token next");
+            let theToken = await token.json();
+            // console.log(theToken.refresh);
+            localStorage.setItem("token", JSON.stringify(theToken));
+            // localStorage.setItem("tokenr", JSON.stringify(theToken.refresh));
+        };
+
+        const getAirComp = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/get_Airline_Companies/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const delete_AirComp = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/delete_Airline/" + AiD.value, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("DELETE data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const getAirlinesByCountry = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(idse.value);
+            let response = await fetch("http://127.0.0.1:8000/getAirlinesByCountry/" + Cdi.value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+            console.log(response);
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const addAirComp = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/add_Airline_Companies/", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body: JSON.stringify({
+                    ACname: ACname.value,
+                    desc: desc.valu,
+                    contry_id: contry_id.value,
+                    contry_name: contry_name.value,
+                    user: user,
+                }),
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+        };
+
+        const get_Flights = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/get_Flights/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const get_singel_Flights = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(idse.value);
+            let response = await fetch("http://127.0.0.1:8000/get_Flights/" + idse.value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const get_Flights_by_parameters = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(idse.value);
+            let response = await fetch("http://127.0.0.1:8000/get_Flights_by_parameters/" + oricounid.value + "/" + Dci.value + "/" + Dti.value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json", 
+                },
+            });
+            let data = await response.json();
+            console.log(response);
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const getFlightsByDeparture_Time = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(idse.value);
+            let response = await fetch("http://127.0.0.1:8000/getFlightsByDeparture_Time/" + Dt.value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+            console.log(response);
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const getFlightsByDestinationCountryld = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(idse.value);
+            let response = await fetch("http://127.0.0.1:8000/getFlightsByDestinationCountryld/" + DciD.value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+            console.log(response);
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const addFlights = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/add_Flights/", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body: JSON.stringify({
+
+                    Airline_Company_id: Airline_Company_id.value,
+                    Origin_Country_id: Origin_Country_id.value,
+                    Destination_Country_id: Destination_Country_id.value,
+                    Departure_Time: Departure_Time.value,
+                    Landing_Time: Landing_Time.value,
+                    Remaining_Tickets: Remaining_Tickets.value,
+                }),
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+
+
+
+        };
+        const update_fields_Flights = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(idse.value);
+            let response = await fetch("http://127.0.0.1:8000/update_fields_Flights/" + Upd_id.value, {
+                method: "put",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body: JSON.stringify({
+                    Fname:Fname.value,
+                    price: price.value,
+                    desc: Fdesc.value,
+                    Airline_Company_id: Airline_Company_idUP.value,
+                    Origin_Country_id: Origin_Country_idUP.value,
+                    Destination_Country_id: Destination_Country_idUP.value,
+                    Departure_Time: Departure_TimeUP.value,
+                    Landing_Time: Landing_TimeUP.value,
+                    Remaining_Tickets: Remaining_TicketsUP.value,
+                }),
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+        };
+        const delete_Flights = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/delete_Flights/" + fID.value, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("DELETE data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+
+        const get_Countries = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/get_Countries/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const add_Countries = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/add_Countries/", {
+                method: "post",
+                headers: {
+                    // "Content-Type": "image/avif",
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body:JSON.stringify({
+
+                    Name: cname.value,
+                    image: image.value,
+
+
+                }),
+            });
+            let data = await response.json();
+            console.log(image.value);
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+        };
+        
+        const get_Customers = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/get_Customers/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const add_Customers = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/add_Customers/", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body: JSON.stringify({
+
+                    User_ld: User_ld.value,
+                    First_Name: First_Name.value,
+                    Last_Name: Last_Name.value,
+                    Address: Address.value,
+                    Phone_No: Phone_No.value,
+                    Credit_Card_No: Credit_Card_No.value,
+
+                }),
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+        };
+
+        const get_Tickets = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/get_Tickets/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("GET data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const get_Tickets_By_Flight_ld = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/get_Tickets_By_Flight_ld/"+ gFid.value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("GET data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        
+        const delete_Tickets = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            // console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/delete_Tickets/" + Tid.value, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("user not logged");
+            }
+        };
+        const add_Tickets = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/add_Tickets/", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body: JSON.stringify({
+
+                    Flight_ld: Flight_ld.value,
+                    // Customer_ld: Customer_ld.value,
+
+                }),
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+        };
+
+
+        const addOrder = async () => {
+            let aTok = JSON.parse(localStorage.getItem("token")).access;
+            console.log(String(aTok));
+            let response = await fetch("http://127.0.0.1:8000/orders/", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + String(aTok),
+                },
+                body: JSON.stringify({
+                    amount: amount.value,
+                    user: user,
+                    Airline_Companie_name: Airline_Companie_name.value
+                }),
+            });
+            let data = await response.json();
+
+            if (response.status === 200) {
+                console.log(data);
+                console.log("get data");
+            } else if (response.statusText === "Unauthorized") {
+                console.log("logoutUser();");
+            }
+        };
+    </script>
+    <h1>Y&M APP with us The sky is not the limit</h1>
+    <hr>
+    User Name:<input id="user" />
+    Pwd:<input id="pwd" type="password" />
+    <button onclick="login()">login</button>
+    <hr>
+    <hr>
+    ACname:<input id="ACname" />
+    desc:<input id="desc" />
+    contry_id:<input id="contry_id" />
+    contry_name:<input id="contry_name" />
+    <button onclick="addAirComp()">addAirComp</button>
+    <hr>
+    <hr>
+    contry_id:<input id="contry_id" />
+    Airline_Companie_name:<input id="Airline_Companie_name" />
+    <button onclick="addOrder()">addOrder</button>
+    <hr>
+    <hr>
+    <hr>
+    SerchBy:Flight ID:<input id="Upd_id" />
+    <!-- SerchBy:origin_country_id:<input id="oricounidUP" />
+    SerchBy:Destination_Country_id:<input id="DciUP" />
+    SerchBy:Airline_Company_id:<input id="AciUP" /> -->
+    
+    
+    FlightName: <input id="Fname" />,
+    Flight Desc: <input id="Fdesc" />,
+    Airline_Company_id: <input id="Airline_Company_idUP" />,
+    Origin_Country_id: <input id="Origin_Country_idUP" />,
+    Destination_Country_id: <input id="Destination_Country_idUP" />,
+    Departure_Time: <input id="Departure_TimeUP" type="date"/>,
+    Landing_Time: <input id="Landing_TimeUP" type="date"/>,
+    Remaining_Tickets:<input id="Remaining_TicketsUP" />,
+    Price: <input id="price" />,
+    <button onclick="update_fields_Flights()">update_fields_Flights</button>
+    <hr>
+    <hr>
+    Airline_Company_id: <input id="Airline_Company_id" />,
+    Origin_Country_id: <input id="Origin_Country_id" />,
+    Destination_Country_id: <input id="Destination_Country_id" />,
+    Departure_Time: <input id="Departure_Time" />,
+    Landing_Time: <input id="Landing_Time" />,
+    Remaining_Tickets:<input id="Remaining_Tickets" />,
+    <button onclick="addFlights()">addFlights</button>
+    <hr>
+    <hr>
+    User_ld: <input id="User_ld" />,
+    First_Name: <input id="First_Name" />,
+    Last_Name: <input id="Last_Name" />,
+    Address: <input id="Address" />,
+    Phone_No: <input id="Phone_No" />,
+    Credit_Card_No:<input id="Credit_Card_No" />,
+    <button onclick="add_Customers()">add_Customers</button>
+    <hr>
+    Name:<input id="cname" />
+    <!-- <img src="https://i.stack.imgur.com/dy62M.png" onclick="add_Countries()" width="100px"  /> -->
+    Image:<input id="image" type="file" name="image" accept="image/*" />
+    <img src="https://i.stack.imgur.com/dy62M.png" onclick="add_Countries()" width="50px" />
+    <!-- <button onclick="add_Countries()">add Countries</button>    -->
+    <hr>
+    <hr>
+    Flight_ld:<input id="Flight_ld" />
+    <!-- Customer_ld:<input id="Customer_ld" /> -->
+    <button onclick="add_Tickets()">add_Tickets</button>
+    <hr>
+    <button onclick="get_Countries()">get Countries</button>
+    <button onclick="get_Flights()">get_Flights</button>
+    <button onclick="getAirComp()">getAirComp</button>
+    <button onclick="get_Customers()">get_Customers</button>
+    <button onclick="get_Tickets()">get_Tickets</button>
+    <hr>
+    idse:<input id="idse" />
+    <button onclick="get_singel_Flights()">get_singel_Flights</button>
+    <hr>
+    <hr>
+    Flitght ID:<input id="gFid" />
+    <button onclick="get_Tickets_By_Flight_ld()">get_Tickets_By_Flight_ld</button>
+    <hr>
+    <hr>
+    origin_country_id:<input id="oricounid" />
+    Destination_Country_id:<input id="Dci" />
+    Departure_Time:<input type="date" id="Dti" />
+
+    <button onclick="get_Flights_by_parameters()">get_Flights_by_parameters</button>
+    <hr>
+    <hr>
+    Cdi:<input id="Cdi" />
+    <button onclick="getAirlinesByCountry()">getAirlinesByCountry</button>
+    <hr>
+    <hr>
+    getFlightsByDeparture_Time:<input type="date" id="Dt" />
+    <button  onclick="getFlightsByDeparture_Time()">getFlightsByDeparture_Time</button>
+    <hr>
+    <hr>
+    DestinationCountryID:<input id="DciD" />
+    <button onclick="getFlightsByDestinationCountryld()">getFlightsByDestinationCountryld</button>
+    <hr>
+    <hr>
+    Ticket ID:<input id="Tid" />
+    <button onclick="delete_Tickets()">delete_Tickets</button>
+    <hr>
+    <hr>
+    Flitght ID:<input id="fID" />
+    <button onclick="delete_Flights()">delete_Flights</button>
+    <hr>
+    <hr>
+    Airline ID:<input id="AiD" />
+    <button onclick="delete_AirComp()">delete_AirComp</button>
+    <hr>
+
+</body>
+
+</html>
